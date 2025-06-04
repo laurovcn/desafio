@@ -5,6 +5,12 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 
+function validateHarvestData(data: { name?: string; propertyId?: string }) {
+  if (!data.name || !data.propertyId) {
+    throw new BadRequestException('Name and propertyId are required');
+  }
+}
+
 @Injectable()
 export class HarvestService {
   constructor(private prisma: PrismaService) {}
@@ -38,9 +44,7 @@ export class HarvestService {
   }
 
   async create(data: { name: string; propertyId: string }) {
-    if (!data.name || !data.propertyId) {
-      throw new BadRequestException('Name and propertyId are required');
-    }
+    validateHarvestData(data);
     return this.prisma.harvest.create({ data });
   }
 
