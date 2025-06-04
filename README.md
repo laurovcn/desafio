@@ -21,11 +21,19 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-# Desafio Técnico - Backend NodeJS (NestJS)
+# Desafio Técnico - Backend NodeJS (NestJS, Prisma, Fastify, Zod)
 
-## Descrição
+API para gerenciamento de produtores rurais, propriedades, safras e culturas.
 
-API para gerenciamento de produtores rurais, propriedades, safras e culturas. Utiliza NestJS, TypeScript, Docker, Postgres, TypeORM, testes automatizados, logs e documentação Swagger.
+## Tecnologias
+
+- **NestJS** + **Fastify**
+- **Prisma ORM** (PostgreSQL)
+- **Zod** para validação e contratos
+- **@asteasolutions/zod-to-openapi** para documentação automática
+- **Swagger** (OpenAPI) em `/api`
+- **Testes unitários** (Jest)
+- **Docker** para ambiente local
 
 ## Como rodar o projeto
 
@@ -33,15 +41,31 @@ API para gerenciamento de produtores rurais, propriedades, safras e culturas. Ut
    ```sh
    npm install
    ```
-2. Configure o banco de dados (ver seção Docker abaixo).
-3. Rode a aplicação:
+2. Configure o banco de dados:
+   - Copie `.env.example` para `.env` e ajuste se necessário.
+   - Suba o banco com Docker:
+     ```sh
+     docker-compose up -d
+     ```
+   - Rode as migrations e gere o client Prisma:
+     ```sh
+     npx prisma migrate deploy
+     npx prisma generate
+     ```
+   - (Opcional) Popule o banco com dados de exemplo:
+     ```sh
+     npm run prisma:seed
+     ```
+3. Inicie a aplicação:
    ```sh
    npm run start:dev
    ```
 
-## Docker
+## Documentação da API
 
-O projeto será configurado para rodar com Docker e Postgres. Aguarde a criação do arquivo `docker-compose.yml`.
+- Acesse: [http://localhost:3000/api](http://localhost:3000/api)
+- Todos os contratos de entrada/saída são baseados em **Zod** e refletem exatamente o que é validado.
+- Exemplos de payloads e respostas disponíveis no Swagger.
 
 ## Testes
 
@@ -49,19 +73,38 @@ Execute:
 
 ```sh
 npm run test
-npm run test:e2e
 ```
 
-## Documentação
+## Estrutura dos principais endpoints
 
-A documentação dos endpoints será exposta via Swagger em `/api`.
+- **Produtores rurais**: `/farmers`
+- **Propriedades**: `/properties`
+- **Safras**: `/harvests`
+- **Culturas**: `/crops`
+- **Dashboard**: `/dashboard`
+- **Healthcheck**: `/health`
 
-## Funcionalidades
+## Exemplo de payload (criação de propriedade)
 
-- Cadastro, edição e exclusão de produtores rurais
-- Validação de CPF/CNPJ
-- Controle de propriedades, safras e culturas
-- Dashboard com totais e gráficos
-- Logs para observabilidade
+```json
+{
+  "name": "Green Valley Farm",
+  "city": "Springfield",
+  "state": "IL",
+  "totalArea": 100,
+  "arableArea": 60,
+  "vegetationArea": 40,
+  "farmerId": "<uuid-do-produtor>"
+}
+```
 
-## Estrutura inicial criada via NestJS CLI.
+## Observações
+
+- Validação de entrada 100% via Zod, refletida na documentação.
+- Arquitetura em camadas, SOLID, Clean Code.
+- Testes unitários cobrindo regras de negócio.
+- Código pronto para produção.
+
+---
+
+> Projeto desenvolvido para desafio técnico. Dúvidas ou sugestões? Abra uma issue!
