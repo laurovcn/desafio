@@ -13,8 +13,23 @@ function validateCpfCnpj(cpfCnpj: string): boolean {
 export class FarmerService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll() {
-    return this.prisma.farmer.findMany({ include: { properties: true } });
+  async findAll(page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const [items, total] = await Promise.all([
+      this.prisma.farmer.findMany({
+        skip,
+        take: limit,
+        include: { properties: true },
+      }),
+      this.prisma.farmer.count(),
+    ]);
+    return {
+      items,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: string) {

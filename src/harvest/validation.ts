@@ -6,3 +6,8 @@ export const HarvestCreateSchema = z.object({
 });
 
 export const HarvestUpdateSchema = HarvestCreateSchema.partial();
+
+export const PaginationQuerySchema = z.object({
+  page: z.string().regex(/^\d+$/).transform(Number).optional().default('1'),
+  limit: z.string().regex(/^\d+$/).transform(Number).optional().default('20'),
+});

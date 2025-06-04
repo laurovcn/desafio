@@ -9,10 +9,23 @@ import { PrismaService } from '../prisma.service';
 export class PropertyService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll() {
-    return this.prisma.property.findMany({
-      include: { farmer: true, harvests: true },
-    });
+  async findAll(page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const [items, total] = await Promise.all([
+      this.prisma.property.findMany({
+        skip,
+        take: limit,
+        include: { farmer: true, harvests: true },
+      }),
+      this.prisma.property.count(),
+    ]);
+    return {
+      items,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: string) {

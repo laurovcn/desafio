@@ -6,18 +6,27 @@ import {
   Delete,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 import { HarvestService } from './harvest.service';
-import { HarvestCreateSchema, HarvestUpdateSchema } from './validation';
+import {
+  HarvestCreateSchema,
+  HarvestUpdateSchema,
+  PaginationQuerySchema,
+} from './validation';
 
 @Controller('harvests')
 export class HarvestController {
   constructor(private readonly harvestService: HarvestService) {}
 
   @Get()
-  findAll() {
-    return this.harvestService.findAll();
+  async findAll(@Query() query: any) {
+    const parsed = PaginationQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new Error(parsed.error.message);
+    }
+    return this.harvestService.findAll(parsed.data.page, parsed.data.limit);
   }
 
   @Get(':id')

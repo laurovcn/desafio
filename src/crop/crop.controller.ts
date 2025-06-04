@@ -6,18 +6,27 @@ import {
   Delete,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 import { CropService } from './crop.service';
-import { CropCreateSchema, CropUpdateSchema } from './validation';
+import {
+  CropCreateSchema,
+  CropUpdateSchema,
+  PaginationQuerySchema,
+} from './validation';
 
 @Controller('crops')
 export class CropController {
   constructor(private readonly cropService: CropService) {}
 
   @Get()
-  async findAll() {
-    return this.cropService.findAll();
+  async findAll(@Query() query: any) {
+    const parsed = PaginationQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new Error(parsed.error.message);
+    }
+    return this.cropService.findAll(parsed.data.page, parsed.data.limit);
   }
 
   @Get(':id')

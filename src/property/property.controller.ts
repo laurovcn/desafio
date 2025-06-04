@@ -6,18 +6,27 @@ import {
   Delete,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 import { PropertyService } from './property.service';
-import { PropertyCreateSchema, PropertyUpdateSchema } from './validation';
+import {
+  PropertyCreateSchema,
+  PropertyUpdateSchema,
+  PaginationQuerySchema,
+} from './validation';
 
 @Controller('properties')
 export class PropertyController {
   constructor(private readonly propertyService: PropertyService) {}
 
   @Get()
-  findAll() {
-    return this.propertyService.findAll();
+  async findAll(@Query() query: any) {
+    const parsed = PaginationQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new Error(parsed.error.message);
+    }
+    return this.propertyService.findAll(parsed.data.page, parsed.data.limit);
   }
 
   @Get(':id')

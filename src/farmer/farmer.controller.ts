@@ -6,18 +6,27 @@ import {
   Delete,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 import { FarmerService } from './farmer.service';
-import { FarmerCreateSchema, FarmerUpdateSchema } from './validation';
+import {
+  FarmerCreateSchema,
+  FarmerUpdateSchema,
+  PaginationQuerySchema,
+} from './validation';
 
 @Controller('farmers')
 export class FarmerController {
   constructor(private readonly farmerService: FarmerService) {}
 
   @Get()
-  findAll() {
-    return this.farmerService.findAll();
+  async findAll(@Query() query: any) {
+    const parsed = PaginationQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new Error(parsed.error.message);
+    }
+    return this.farmerService.findAll(parsed.data.page, parsed.data.limit);
   }
 
   @Get(':id')
