@@ -10,7 +10,7 @@ const mockPrisma = {
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
-    count: jest.fn(), // Adicionado para mock de paginação
+    count: jest.fn(),
   },
 };
 
@@ -32,7 +32,7 @@ describe('HarvestService', () => {
     mockPrisma.harvest.findMany.mockResolvedValue([
       { id: '1', name: 'Harvest', property: {}, crops: [] },
     ]);
-    mockPrisma.harvest.count.mockResolvedValue(1); // Adicionado para mock de paginação
+    mockPrisma.harvest.count.mockResolvedValue(1);
     const result = await service.findAll();
     expect(result.items).toHaveLength(1);
     expect(mockPrisma.harvest.findMany).toHaveBeenCalled();

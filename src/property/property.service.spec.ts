@@ -10,7 +10,7 @@ const mockPrisma = {
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
-    count: jest.fn(), // Adicionado para mock de paginação
+    count: jest.fn(),
   },
 };
 
@@ -32,7 +32,7 @@ describe('PropertyService', () => {
     mockPrisma.property.findMany.mockResolvedValue([
       { id: '1', name: 'Farm', farmer: {}, harvests: [] },
     ]);
-    mockPrisma.property.count.mockResolvedValue(1); // Adicionado para mock de paginação
+    mockPrisma.property.count.mockResolvedValue(1);
     const result = await service.findAll();
     expect(result.items).toHaveLength(1);
     expect(mockPrisma.property.findMany).toHaveBeenCalled();
@@ -51,7 +51,7 @@ describe('PropertyService', () => {
     const result = await service.create({
       name: 'Farm',
       city: 'City',
-      state: 'ST',
+      state: 'State',
       totalArea: 100,
       arableArea: 60,
       vegetationArea: 40,

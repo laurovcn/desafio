@@ -34,7 +34,6 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
 
-  // Merge Zod schemas into OpenAPI document
   const registry = getOpenApiRegistry();
   const generator = new OpenApiGeneratorV31(registry.definitions);
   const openApiDoc = generator.generateDocument({
@@ -48,11 +47,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config, {
     deepScanRoutes: true,
   });
-  // Força a atribuição dos schemas, ignorando tipos
-  (document.components as any).schemas = {
-    ...(document.components?.schemas || {}),
-    ...(openApiDoc.components?.schemas || {}),
-  };
+  (document.components as any).schemas = openApiDoc.components?.schemas;
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
