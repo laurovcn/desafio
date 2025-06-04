@@ -8,6 +8,10 @@ import {
   Body,
 } from '@nestjs/common';
 import { PropertyService } from './property.service';
+import {
+  PropertyCreateSchema,
+  PropertyUpdateSchema,
+} from '../validation/zod.dto';
 
 @Controller('properties')
 export class PropertyController {
@@ -36,7 +40,11 @@ export class PropertyController {
       farmerId: string;
     },
   ) {
-    return this.propertyService.create(data);
+    const parsed = PropertyCreateSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new Error(parsed.error.message);
+    }
+    return this.propertyService.create(parsed.data);
   }
 
   @Put(':id')
@@ -53,7 +61,11 @@ export class PropertyController {
       farmerId: string;
     }>,
   ) {
-    return this.propertyService.update(id, data);
+    const parsed = PropertyUpdateSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new Error(parsed.error.message);
+    }
+    return this.propertyService.update(id, parsed.data);
   }
 
   @Delete(':id')

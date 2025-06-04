@@ -8,6 +8,7 @@ import {
   Body,
 } from '@nestjs/common';
 import { FarmerService } from './farmer.service';
+import { FarmerCreateSchema, FarmerUpdateSchema } from '../validation/zod.dto';
 
 @Controller('farmers')
 export class FarmerController {
@@ -25,7 +26,11 @@ export class FarmerController {
 
   @Post()
   create(@Body() data: { cpfCnpj: string; name: string }) {
-    return this.farmerService.create(data);
+    const parsed = FarmerCreateSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new Error(parsed.error.message);
+    }
+    return this.farmerService.create(parsed.data);
   }
 
   @Put(':id')
@@ -33,7 +38,11 @@ export class FarmerController {
     @Param('id') id: string,
     @Body() data: Partial<{ cpfCnpj: string; name: string }>,
   ) {
-    return this.farmerService.update(id, data);
+    const parsed = FarmerUpdateSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new Error(parsed.error.message);
+    }
+    return this.farmerService.update(id, parsed.data);
   }
 
   @Delete(':id')
