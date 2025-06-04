@@ -7,7 +7,8 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { generateOpenApiSchemas } from './validation/openapi.schemas';
+import { getOpenApiRegistry } from './validation/openapi.schemas';
+import { OpenApiGeneratorV31 } from '@asteasolutions/zod-to-openapi';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -34,12 +35,24 @@ async function bootstrap() {
     .build();
 
   // Merge Zod schemas into OpenAPI document
-  const openApiSchemas = generateOpenApiSchemas();
+  const registry = getOpenApiRegistry();
+  const generator = new OpenApiGeneratorV31(registry.definitions);
+  const openApiDoc = generator.generateDocument({
+    openapi: '3.1.0',
+    info: {
+      title: 'Rural Producers Management',
+      version: '1.0',
+      description: 'API for managing farmers, properties, harvests, and crops',
+    },
+  });
   const document = SwaggerModule.createDocument(app, config, {
-    extraModels: [],
-    // @ts-ignore
-    components: { schemas: openApiSchemas },
-  } as any);
+    deepScanRoutes: true,
+  });
+  // Força a atribuição dos schemas, ignorando tipos
+  (document.components as any).schemas = {
+    ...(document.components?.schemas || {}),
+    ...(openApiDoc.components?.schemas || {}),
+  };
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');

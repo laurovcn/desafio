@@ -1,8 +1,14 @@
 import { z } from 'zod';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+extendZodWithOpenApi(z);
 
-export const CropCreateSchema = z.object({
-  name: z.string().min(1),
-  harvestId: z.string().uuid(),
+export const CropCreateSchema = z
+  .object({
+    name: z.string().min(1),
+    harvestId: z.string().uuid(),
+  })
+  .openapi({ title: 'CropCreate' });
+
+export const CropUpdateSchema = CropCreateSchema.partial().openapi({
+  title: 'CropUpdate',
 });
-
-export const CropUpdateSchema = CropCreateSchema.partial();

@@ -1,4 +1,4 @@
-import { OpenAPIGenerator } from 'zod-to-openapi';
+import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { CropCreateSchema, CropUpdateSchema } from '../crop/validation';
 import { FarmerCreateSchema, FarmerUpdateSchema } from '../farmer/validation';
 import {
@@ -10,17 +10,17 @@ import {
   HarvestUpdateSchema,
 } from '../harvest/validation';
 
-export function generateOpenApiSchemas() {
-  const schemas = [
-    CropCreateSchema,
-    CropUpdateSchema,
-    FarmerCreateSchema,
-    FarmerUpdateSchema,
-    PropertyCreateSchema,
-    PropertyUpdateSchema,
-    HarvestCreateSchema,
-    HarvestUpdateSchema,
-  ];
-  const generator = new OpenAPIGenerator(schemas);
-  return generator.generate();
+const registry = new OpenAPIRegistry();
+
+registry.register('CropCreate', CropCreateSchema);
+registry.register('CropUpdate', CropUpdateSchema);
+registry.register('FarmerCreate', FarmerCreateSchema);
+registry.register('FarmerUpdate', FarmerUpdateSchema);
+registry.register('PropertyCreate', PropertyCreateSchema);
+registry.register('PropertyUpdate', PropertyUpdateSchema);
+registry.register('HarvestCreate', HarvestCreateSchema);
+registry.register('HarvestUpdate', HarvestUpdateSchema);
+
+export function getOpenApiRegistry() {
+  return registry;
 }
