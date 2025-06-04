@@ -7,11 +7,9 @@ import {
   Param,
   Body,
 } from '@nestjs/common';
+import { ApiBody } from '@nestjs/swagger';
 import { HarvestService } from './harvest.service';
-import {
-  HarvestCreateSchema,
-  HarvestUpdateSchema,
-} from '../validation/zod.dto';
+import { HarvestCreateSchema, HarvestUpdateSchema } from './validation';
 
 @Controller('harvests')
 export class HarvestController {
@@ -28,6 +26,7 @@ export class HarvestController {
   }
 
   @Post()
+  @ApiBody({ schema: { $ref: '#/components/schemas/HarvestCreate' } })
   create(@Body() data: { name: string; propertyId: string }) {
     const parsed = HarvestCreateSchema.safeParse(data);
     if (!parsed.success) {
@@ -37,6 +36,7 @@ export class HarvestController {
   }
 
   @Put(':id')
+  @ApiBody({ schema: { $ref: '#/components/schemas/HarvestUpdate' } })
   update(
     @Param('id') id: string,
     @Body() data: Partial<{ name: string; propertyId: string }>,

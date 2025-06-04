@@ -7,11 +7,9 @@ import {
   Param,
   Body,
 } from '@nestjs/common';
+import { ApiBody } from '@nestjs/swagger';
 import { PropertyService } from './property.service';
-import {
-  PropertyCreateSchema,
-  PropertyUpdateSchema,
-} from '../validation/zod.dto';
+import { PropertyCreateSchema, PropertyUpdateSchema } from './validation';
 
 @Controller('properties')
 export class PropertyController {
@@ -28,6 +26,7 @@ export class PropertyController {
   }
 
   @Post()
+  @ApiBody({ schema: { $ref: '#/components/schemas/PropertyCreate' } })
   create(
     @Body()
     data: {
@@ -48,6 +47,7 @@ export class PropertyController {
   }
 
   @Put(':id')
+  @ApiBody({ schema: { $ref: '#/components/schemas/PropertyUpdate' } })
   update(
     @Param('id') id: string,
     @Body()

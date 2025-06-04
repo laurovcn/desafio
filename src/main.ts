@@ -7,6 +7,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import { generateOpenApiSchemas } from './validation/openapi.schemas';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -31,7 +32,14 @@ async function bootstrap() {
     .setDescription('API for managing farmers, properties, harvests, and crops')
     .setVersion('1.0')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+
+  // Merge Zod schemas into OpenAPI document
+  const openApiSchemas = generateOpenApiSchemas();
+  const document = SwaggerModule.createDocument(app, config, {
+    extraModels: [],
+    // @ts-ignore
+    components: { schemas: openApiSchemas },
+  } as any);
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');

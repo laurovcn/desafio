@@ -7,8 +7,9 @@ import {
   Param,
   Body,
 } from '@nestjs/common';
+import { ApiBody } from '@nestjs/swagger';
 import { FarmerService } from './farmer.service';
-import { FarmerCreateSchema, FarmerUpdateSchema } from '../validation/zod.dto';
+import { FarmerCreateSchema, FarmerUpdateSchema } from './validation';
 
 @Controller('farmers')
 export class FarmerController {
@@ -25,6 +26,7 @@ export class FarmerController {
   }
 
   @Post()
+  @ApiBody({ schema: { $ref: '#/components/schemas/FarmerCreate' } })
   create(@Body() data: { cpfCnpj: string; name: string }) {
     const parsed = FarmerCreateSchema.safeParse(data);
     if (!parsed.success) {
@@ -34,6 +36,7 @@ export class FarmerController {
   }
 
   @Put(':id')
+  @ApiBody({ schema: { $ref: '#/components/schemas/FarmerUpdate' } })
   update(
     @Param('id') id: string,
     @Body() data: Partial<{ cpfCnpj: string; name: string }>,

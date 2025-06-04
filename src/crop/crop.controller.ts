@@ -6,10 +6,10 @@ import {
   Delete,
   Param,
   Body,
-  NotFoundException,
 } from '@nestjs/common';
+import { ApiBody } from '@nestjs/swagger';
 import { CropService } from './crop.service';
-import { CropCreateSchema, CropUpdateSchema } from '../validation/zod.dto';
+import { CropCreateSchema, CropUpdateSchema } from './validation';
 
 @Controller('crops')
 export class CropController {
@@ -26,6 +26,7 @@ export class CropController {
   }
 
   @Post()
+  @ApiBody({ schema: { $ref: '#/components/schemas/CropCreate' } })
   async create(@Body() data: { name: string; harvestId: string }) {
     const parsed = CropCreateSchema.safeParse(data);
     if (!parsed.success) {
@@ -35,6 +36,7 @@ export class CropController {
   }
 
   @Put(':id')
+  @ApiBody({ schema: { $ref: '#/components/schemas/CropUpdate' } })
   async update(
     @Param('id') id: string,
     @Body() data: Partial<{ name: string; harvestId: string }>,
