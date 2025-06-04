@@ -15,6 +15,7 @@ import {
   CropUpdateSchema,
   PaginationQuerySchema,
 } from './validation';
+import { parseOrThrow } from '../validation/zod.utils';
 
 @Controller('crops')
 export class CropController {
@@ -37,11 +38,8 @@ export class CropController {
   @Post()
   @ApiBody({ schema: { $ref: '#/components/schemas/CropCreate' } })
   async create(@Body() data: { name: string; harvestId: string }) {
-    const parsed = CropCreateSchema.safeParse(data);
-    if (!parsed.success) {
-      throw new Error(parsed.error.message);
-    }
-    return this.cropService.create(parsed.data);
+    const parsed = parseOrThrow(CropCreateSchema, data);
+    return this.cropService.create(parsed);
   }
 
   @Put(':id')
@@ -50,11 +48,8 @@ export class CropController {
     @Param('id') id: string,
     @Body() data: Partial<{ name: string; harvestId: string }>,
   ) {
-    const parsed = CropUpdateSchema.safeParse(data);
-    if (!parsed.success) {
-      throw new Error(parsed.error.message);
-    }
-    return this.cropService.update(id, parsed.data);
+    const parsed = parseOrThrow(CropUpdateSchema, data);
+    return this.cropService.update(id, parsed);
   }
 
   @Delete(':id')

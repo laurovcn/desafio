@@ -5,6 +5,21 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 
+function validateAreas(data: {
+  arableArea?: number;
+  vegetationArea?: number;
+  totalArea?: number;
+}) {
+  if (
+    (data.arableArea ?? 0) + (data.vegetationArea ?? 0) >
+    (data.totalArea ?? 0)
+  ) {
+    throw new BadRequestException(
+      'The sum of arable and vegetation areas cannot exceed the total area',
+    );
+  }
+}
+
 @Injectable()
 export class PropertyService {
   constructor(private prisma: PrismaService) {}
@@ -46,14 +61,7 @@ export class PropertyService {
     vegetationArea: number;
     farmerId: string;
   }) {
-    if (
-      (data.arableArea ?? 0) + (data.vegetationArea ?? 0) >
-      (data.totalArea ?? 0)
-    ) {
-      throw new BadRequestException(
-        'The sum of arable and vegetation areas cannot exceed the total area',
-      );
-    }
+    validateAreas(data);
     return this.prisma.property.create({ data });
   }
 
@@ -69,14 +77,7 @@ export class PropertyService {
       farmerId: string;
     }>,
   ) {
-    if (
-      (data.arableArea ?? 0) + (data.vegetationArea ?? 0) >
-      (data.totalArea ?? 0)
-    ) {
-      throw new BadRequestException(
-        'The sum of arable and vegetation areas cannot exceed the total area',
-      );
-    }
+    validateAreas(data);
     return this.prisma.property.update({ where: { id }, data });
   }
 

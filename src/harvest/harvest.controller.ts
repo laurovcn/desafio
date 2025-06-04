@@ -15,6 +15,7 @@ import {
   HarvestUpdateSchema,
   PaginationQuerySchema,
 } from './validation';
+import { parseOrThrow } from '../validation/zod.utils';
 
 @Controller('harvests')
 export class HarvestController {
@@ -37,11 +38,8 @@ export class HarvestController {
   @Post()
   @ApiBody({ schema: { $ref: '#/components/schemas/HarvestCreate' } })
   create(@Body() data: { name: string; propertyId: string }) {
-    const parsed = HarvestCreateSchema.safeParse(data);
-    if (!parsed.success) {
-      throw new Error(parsed.error.message);
-    }
-    return this.harvestService.create(parsed.data);
+    const parsed = parseOrThrow(HarvestCreateSchema, data);
+    return this.harvestService.create(parsed);
   }
 
   @Put(':id')
@@ -50,11 +48,8 @@ export class HarvestController {
     @Param('id') id: string,
     @Body() data: Partial<{ name: string; propertyId: string }>,
   ) {
-    const parsed = HarvestUpdateSchema.safeParse(data);
-    if (!parsed.success) {
-      throw new Error(parsed.error.message);
-    }
-    return this.harvestService.update(id, parsed.data);
+    const parsed = parseOrThrow(HarvestUpdateSchema, data);
+    return this.harvestService.update(id, parsed);
   }
 
   @Delete(':id')

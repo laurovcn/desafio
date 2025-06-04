@@ -15,6 +15,7 @@ import {
   PropertyUpdateSchema,
   PaginationQuerySchema,
 } from './validation';
+import { parseOrThrow } from '../validation/zod.utils';
 
 @Controller('properties')
 export class PropertyController {
@@ -48,11 +49,8 @@ export class PropertyController {
       farmerId: string;
     },
   ) {
-    const parsed = PropertyCreateSchema.safeParse(data);
-    if (!parsed.success) {
-      throw new Error(parsed.error.message);
-    }
-    return this.propertyService.create(parsed.data);
+    const parsed = parseOrThrow(PropertyCreateSchema, data);
+    return this.propertyService.create(parsed);
   }
 
   @Put(':id')
@@ -70,11 +68,8 @@ export class PropertyController {
       farmerId: string;
     }>,
   ) {
-    const parsed = PropertyUpdateSchema.safeParse(data);
-    if (!parsed.success) {
-      throw new Error(parsed.error.message);
-    }
-    return this.propertyService.update(id, parsed.data);
+    const parsed = parseOrThrow(PropertyUpdateSchema, data);
+    return this.propertyService.update(id, parsed);
   }
 
   @Delete(':id')

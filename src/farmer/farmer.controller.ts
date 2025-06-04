@@ -15,6 +15,7 @@ import {
   FarmerUpdateSchema,
   PaginationQuerySchema,
 } from './validation';
+import { parseOrThrow } from '../validation/zod.utils';
 
 @Controller('farmers')
 export class FarmerController {
@@ -37,11 +38,8 @@ export class FarmerController {
   @Post()
   @ApiBody({ schema: { $ref: '#/components/schemas/FarmerCreate' } })
   create(@Body() data: { cpfCnpj: string; name: string }) {
-    const parsed = FarmerCreateSchema.safeParse(data);
-    if (!parsed.success) {
-      throw new Error(parsed.error.message);
-    }
-    return this.farmerService.create(parsed.data);
+    const parsed = parseOrThrow(FarmerCreateSchema, data);
+    return this.farmerService.create(parsed);
   }
 
   @Put(':id')
@@ -50,11 +48,8 @@ export class FarmerController {
     @Param('id') id: string,
     @Body() data: Partial<{ cpfCnpj: string; name: string }>,
   ) {
-    const parsed = FarmerUpdateSchema.safeParse(data);
-    if (!parsed.success) {
-      throw new Error(parsed.error.message);
-    }
-    return this.farmerService.update(id, parsed.data);
+    const parsed = parseOrThrow(FarmerUpdateSchema, data);
+    return this.farmerService.update(id, parsed);
   }
 
   @Delete(':id')

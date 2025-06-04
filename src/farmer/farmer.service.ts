@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 
-function validateCpfCnpj(cpfCnpj: string): boolean {
+export function validateCpfCnpj(cpfCnpj: string): boolean {
   return /^\d{11}$/.test(cpfCnpj) || /^\d{14}$/.test(cpfCnpj);
 }
 
