@@ -10,6 +10,7 @@ const mockPrisma = {
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    count: jest.fn(), // Adicionado para mock de paginação
   },
 };
 
@@ -31,9 +32,11 @@ describe('HarvestService', () => {
     mockPrisma.harvest.findMany.mockResolvedValue([
       { id: '1', name: 'Harvest', property: {}, crops: [] },
     ]);
+    mockPrisma.harvest.count.mockResolvedValue(1); // Adicionado para mock de paginação
     const result = await service.findAll();
-    expect(result).toHaveLength(1);
+    expect(result.items).toHaveLength(1);
     expect(mockPrisma.harvest.findMany).toHaveBeenCalled();
+    expect(mockPrisma.harvest.count).toHaveBeenCalled();
   });
 
   it('should throw if harvest not found', async () => {

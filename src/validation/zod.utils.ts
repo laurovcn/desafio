@@ -1,4 +1,4 @@
-import { ZodSchema, ZodError } from 'zod';
+import { ZodSchema } from 'zod';
 import { BadRequestException } from '@nestjs/common';
 
 export function parseOrThrow<T>(schema: ZodSchema<T>, data: unknown): T {
