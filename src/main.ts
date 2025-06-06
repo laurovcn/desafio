@@ -28,6 +28,10 @@ async function bootstrap() {
     },
   );
 
+  await app.register(require('@fastify/cors'), {
+    origin: '*',
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Rural Producers Management')
     .setDescription('API for managing farmers, properties, harvests, and crops')
@@ -48,7 +52,9 @@ async function bootstrap() {
     deepScanRoutes: true,
   });
   (document.components as any).schemas = openApiDoc.components?.schemas;
-  SwaggerModule.setup('api', app, document);
+  if (process.env.NODE_ENV !== 'production') {
+    SwaggerModule.setup('api', app, document);
+  }
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
