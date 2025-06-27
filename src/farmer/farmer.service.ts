@@ -19,7 +19,22 @@ export class FarmerService {
       this.prisma.farmer.findMany({
         skip,
         take: limit,
-        include: { properties: true },
+        select: {
+          id: true,
+          cpfCnpj: true,
+          name: true,
+          role: true,
+          properties: {
+            select: {
+              id: true,
+              name: true,
+              city: true,
+              state: true,
+              totalArea: true,
+            },
+          },
+        },
+        orderBy: { name: 'asc' },
       }),
       this.prisma.farmer.count(),
     ]);
@@ -35,7 +50,23 @@ export class FarmerService {
   async findOne(id: string) {
     const farmer = await this.prisma.farmer.findUnique({
       where: { id },
-      include: { properties: true },
+      select: {
+        id: true,
+        cpfCnpj: true,
+        name: true,
+        role: true,
+        properties: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            totalArea: true,
+            arableArea: true,
+            vegetationArea: true,
+          },
+        },
+      },
     });
     if (!farmer) throw new NotFoundException('Farmer not found');
     return farmer;

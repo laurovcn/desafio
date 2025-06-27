@@ -6,5 +6,6 @@ import { FarmerService } from './farmer.service';
 @Module({
   controllers: [FarmerController],
   providers: [FarmerService, PrismaService],
+  exports: [FarmerService],
 })
 export class FarmerModule {}

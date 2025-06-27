@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '../validation/zod-openapi';
 
 export const CropCreateSchema = z
   .object({

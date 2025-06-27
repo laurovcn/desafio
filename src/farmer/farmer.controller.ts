@@ -7,6 +7,7 @@ import {
   Param,
   Body,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 import { FarmerService } from './farmer.service';
@@ -16,8 +17,14 @@ import {
   PaginationQuerySchema,
 } from './validation';
 import { parseOrThrow } from '../validation/zod.utils';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { Role } from '../auth/roles.enum';
 
 @Controller('farmers')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.FARMER)
 export class FarmerController {
   constructor(private readonly farmerService: FarmerService) {}
 
