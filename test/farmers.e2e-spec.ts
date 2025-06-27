@@ -4,7 +4,6 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma.service';
 import { Role } from '@prisma/client';
-import { JwtService } from '@nestjs/jwt';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -17,11 +16,8 @@ import { mockPrismaService } from './prisma.mock';
 describe('Farmers E2E', () => {
   let app: NestFastifyApplication;
   let prisma: PrismaService;
-  let jwtService: JwtService;
-  let authToken: string;
 
   beforeAll(async () => {
-    // Configurar env para teste
     process.env.NODE_ENV = 'test';
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -29,6 +25,12 @@ describe('Farmers E2E', () => {
     })
       .overrideProvider(PrismaService)
       .useValue(mockPrismaService)
+      .overrideGuard(JwtAuthGuard)
+      .useValue({ canActivate: () => true })
+      .overrideGuard(RolesGuard)
+      .useValue({ canActivate: () => true })
+      .overrideGuard(ThrottlerGuard)
+      .useValue({ canActivate: () => true })
       .compile();
 
     const fastifyAdapter = new FastifyAdapter({ logger: false });
@@ -37,22 +39,8 @@ describe('Farmers E2E', () => {
         fastifyAdapter,
       );
 
-    // Desabilitar guards globalmente
-    app.useGlobalGuards();
-
-    prisma = moduleFixture.get<PrismaService>(PrismaService);
-    jwtService = moduleFixture.get<JwtService>(JwtService);
-
-    // Aguardar inicialização completa
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
-
-    // Criar token de autenticação
-    authToken = jwtService.sign({
-      sub: 'test-farmer-id',
-      name: 'Test Farmer',
-      role: Role.FARMER,
-    });
   });
 
   afterAll(async () => {
@@ -63,7 +51,6 @@ describe('Farmers E2E', () => {
 
   describe('/farmers (GET)', () => {
     it('should return 403 without proper authentication', async () => {
-      // Mock da resposta do findMany
       mockPrismaService.farmer.findMany.mockResolvedValue([]);
       mockPrismaService.farmer.count.mockResolvedValue(0);
 

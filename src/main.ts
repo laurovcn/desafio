@@ -28,7 +28,6 @@ async function bootstrap() {
     },
   );
 
-  // Só registrar plugins se não estivermos em teste
   if (process.env.NODE_ENV !== 'test') {
     await app.register(require('@fastify/helmet'));
     await app.register(require('@fastify/cors'), {
@@ -60,7 +59,6 @@ async function bootstrap() {
     SwaggerModule.setup('api', app, document);
   }
 
-  // Exportar lista de endpoints
   const fastify = app.getHttpAdapter().getInstance();
   fastify.get('/routes', async (request, reply) => {
     reply.type('text/plain');

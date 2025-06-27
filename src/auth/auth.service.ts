@@ -13,7 +13,6 @@ export class AuthService {
   async validateUser(id: string) {
     try {
       const farmer = await this.farmerService.findOne(id);
-      // utiliza role definido no banco
       return { id: farmer.id, name: farmer.name, role: Role.FARMER };
     } catch {
       throw new UnauthorizedException();

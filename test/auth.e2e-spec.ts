@@ -19,7 +19,6 @@ describe('Auth E2E', () => {
   let prisma: PrismaService;
 
   beforeAll(async () => {
-    // Configurar env para teste
     process.env.NODE_ENV = 'test';
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -43,7 +42,6 @@ describe('Auth E2E', () => {
 
     prisma = moduleFixture.get<PrismaService>(PrismaService);
 
-    // Aguardar inicialização completa
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
   });
@@ -56,7 +54,6 @@ describe('Auth E2E', () => {
 
   describe('/auth/login (POST)', () => {
     it('should login successfully with valid credentials', async () => {
-      // Mock do findUnique para retornar usuário válido
       mockPrismaService.farmer.findUnique.mockResolvedValue({
         id: 'test-farmer-id',
         cpfCnpj: '11111111111',
@@ -76,7 +73,6 @@ describe('Auth E2E', () => {
     }, 15000);
 
     it('should fail with invalid credentials', async () => {
-      // Mock do findUnique para retornar null (usuário não encontrado)
       mockPrismaService.farmer.findUnique.mockResolvedValue(null);
 
       await request(app.getHttpServer())

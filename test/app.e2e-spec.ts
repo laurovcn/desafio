@@ -17,7 +17,6 @@ describe('AppController (e2e)', () => {
   let prisma: PrismaService;
 
   beforeAll(async () => {
-    // Configurar env para teste
     process.env.NODE_ENV = 'test';
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -41,7 +40,6 @@ describe('AppController (e2e)', () => {
 
     prisma = moduleFixture.get<PrismaService>(PrismaService);
 
-    // Aguardar inicialização completa
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
   });

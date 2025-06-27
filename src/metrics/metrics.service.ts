@@ -12,13 +12,10 @@ export class MetricsService implements OnModuleInit {
   private readonly httpRequestTotal: Counter<string>;
 
   constructor() {
-    // Limpar registry anterior
     register.clear();
 
-    // Coletar métricas padrão do processo
     collectDefaultMetrics({ register });
 
-    // Métrica de duração de requests HTTP
     this.httpRequestDuration = new Histogram({
       name: 'http_request_duration_seconds',
       help: 'Duration of HTTP requests in seconds',
@@ -27,7 +24,6 @@ export class MetricsService implements OnModuleInit {
       registers: [register],
     });
 
-    // Contador de requests HTTP
     this.httpRequestTotal = new Counter({
       name: 'http_requests_total',
       help: 'Total number of HTTP requests',
@@ -42,7 +38,6 @@ export class MetricsService implements OnModuleInit {
     }
   }
 
-  // Observar duração de request
   observeHttpDuration(
     method: string,
     route: string,
@@ -54,12 +49,10 @@ export class MetricsService implements OnModuleInit {
       .observe(duration);
   }
 
-  // Incrementar contador de requests
   incrementHttpRequests(method: string, route: string, statusCode: number) {
     this.httpRequestTotal.labels(method, route, statusCode.toString()).inc();
   }
 
-  // Retornar métricas no formato Prometheus
   async getMetrics(): Promise<string> {
     return register.metrics();
   }
