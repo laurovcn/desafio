@@ -7,11 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  FARMER
+}
+
 model Farmer {
   id         String     @id @default(uuid())
   cpfCnpj    String     @unique
   name       String
+  role       Role       @default(FARMER)
   properties Property[]
+
+  @@index([name])
+  @@index([role])
 }
 
 model Property {
@@ -25,6 +34,10 @@ model Property {
   farmerId       String
   farmer         Farmer    @relation(fields: [farmerId], references: [id])
   harvests       Harvest[]
+
+  @@index([farmerId])
+  @@index([city, state])
+  @@index([name])
 }
 
 model Harvest {
@@ -33,6 +46,9 @@ model Harvest {
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id])
   crops      Crop[]
+
+  @@index([propertyId])
+  @@index([name])
 }
 
 model Crop {
@@ -40,4 +56,7 @@ model Crop {
   name      String
   harvestId String
   harvest   Harvest @relation(fields: [harvestId], references: [id])
+
+  @@index([harvestId])
+  @@index([name])
 }

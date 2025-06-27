@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -13,12 +13,14 @@ async function main() {
     data: {
       cpfCnpj: '12345678901',
       name: 'John Smith',
+      role: Role.ADMIN,
     },
   });
   const farmer2 = await prisma.farmer.create({
     data: {
       cpfCnpj: '98765432100',
       name: 'Mary Johnson',
+      role: Role.FARMER,
     },
   });
 
