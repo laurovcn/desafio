@@ -28,9 +28,13 @@ async function bootstrap() {
     },
   );
 
-  await app.register(require('@fastify/cors'), {
-    origin: '*',
-  });
+  // Só registrar plugins se não estivermos em teste
+  if (process.env.NODE_ENV !== 'test') {
+    await app.register(require('@fastify/helmet'));
+    await app.register(require('@fastify/cors'), {
+      origin: '*',
+    });
+  }
 
   const config = new DocumentBuilder()
     .setTitle('Rural Producers Management')
@@ -55,6 +59,13 @@ async function bootstrap() {
   if (process.env.NODE_ENV !== 'production') {
     SwaggerModule.setup('api', app, document);
   }
+
+  // Exportar lista de endpoints
+  const fastify = app.getHttpAdapter().getInstance();
+  fastify.get('/routes', async (request, reply) => {
+    reply.type('text/plain');
+    reply.send(fastify.printRoutes());
+  });
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
