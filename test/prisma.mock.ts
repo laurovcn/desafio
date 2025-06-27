@@ -1,0 +1,45 @@
+export const mockPrismaService = {
+  farmer: {
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    create: jest.fn().mockResolvedValue({
+      id: 'test-id',
+      name: 'Test',
+      cpfCnpj: '12345678901',
+    }),
+    update: jest.fn().mockResolvedValue({
+      id: 'test-id',
+      name: 'Test',
+      cpfCnpj: '12345678901',
+    }),
+    delete: jest.fn().mockResolvedValue({ id: 'test-id' }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(0),
+  },
+  property: {
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    create: jest.fn().mockResolvedValue({ id: 'test-id' }),
+    update: jest.fn().mockResolvedValue({ id: 'test-id' }),
+    delete: jest.fn().mockResolvedValue({ id: 'test-id' }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+  },
+  crop: {
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    create: jest.fn().mockResolvedValue({ id: 'test-id' }),
+    update: jest.fn().mockResolvedValue({ id: 'test-id' }),
+    delete: jest.fn().mockResolvedValue({ id: 'test-id' }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+  },
+  harvest: {
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    create: jest.fn().mockResolvedValue({ id: 'test-id' }),
+    update: jest.fn().mockResolvedValue({ id: 'test-id' }),
+    delete: jest.fn().mockResolvedValue({ id: 'test-id' }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+  },
+  $connect: jest.fn().mockResolvedValue(undefined),
+  $disconnect: jest.fn().mockResolvedValue(undefined),
+};
