@@ -84,9 +84,56 @@ describe('PropertyService', () => {
     expect(result.name).toBe('Farm Updated');
   });
 
+  it('should throw BadRequestException when update has invalid areas', async () => {
+    await expect(
+      service.update('1', {
+        totalArea: 50,
+        arableArea: 30,
+        vegetationArea: 30,
+      }),
+    ).rejects.toThrow(BadRequestException);
+  });
+
   it('should delete a property', async () => {
     mockPrisma.property.delete.mockResolvedValue({ id: '1' });
     const result = await service.remove('1');
     expect(result).toEqual({ deleted: true });
+  });
+
+  it('should return a property when found', async () => {
+    const mockProp = { id: '1', name: 'Farm', farmer: {}, harvests: [] };
+    mockPrisma.property.findUnique.mockResolvedValue(mockProp);
+    const result = await service.findOne('1');
+    expect(result).toEqual(mockProp);
+    expect(mockPrisma.property.findUnique).toHaveBeenCalledWith({
+      where: { id: '1' },
+      include: { farmer: true, harvests: true },
+    });
+  });
+
+  it('should paginate properties based on page and limit', async () => {
+    const items = Array(4).fill({
+      id: 'x',
+      name: 'Farm',
+      farmer: {},
+      harvests: [],
+    });
+    mockPrisma.property.findMany.mockResolvedValue(items);
+    mockPrisma.property.count.mockResolvedValue(20);
+    const page = 3;
+    const limit = 4;
+    const result = await service.findAll(page, limit);
+    expect(mockPrisma.property.findMany).toHaveBeenCalledWith({
+      skip: (page - 1) * limit,
+      take: limit,
+      include: { farmer: true, harvests: true },
+    });
+    expect(result).toEqual({
+      items,
+      total: 20,
+      page,
+      limit,
+      totalPages: Math.ceil(20 / limit),
+    });
   });
 });
